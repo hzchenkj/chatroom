@@ -39,14 +39,13 @@ func main() {
 			fmt.Println("你的输入有误，请重新输入")
 		}
 
-		if !loop{
+		if !loop {
 			break
 		}
 
 	}
 
 	//根据用户输入，显示新的提示信息
-
 	if key == 1 {
 		//登陆聊天室
 		fmt.Println("请输入用户id")
