@@ -1,6 +1,7 @@
 package main
 
 import (
+	"chatroom/client/process"
 	"fmt"
 	"os"
 )
@@ -14,7 +15,7 @@ func main() {
 	//是否显示菜单
 	var loop = true
 	fmt.Println(loop)
-	for {
+	for true {
 
 		fmt.Println(">>>>欢迎登录多人聊天系统<<<<")
 		fmt.Println("\t1 登陆聊天室")
@@ -26,35 +27,25 @@ func main() {
 		switch key {
 		case 1:
 			fmt.Println("登陆聊天室")
-			loop = false
+			//登陆聊天室
+			fmt.Println("请输入用户id")
+			fmt.Scanf("%d\n", &userId)
+			fmt.Println("请输入用户密码")
+			fmt.Scanf("%s\n", &userPwd)
+			up := &process.UserProcess{}
+			up.Login(userId, userPwd)
+			//loop = false
 		case 2:
 			fmt.Println("注册用户")
-			loop = false
+			//loop = false
 		case 3:
 			fmt.Println("退出系统")
-			loop = false
+			//loop = false
 			os.Exit(0)
 
 		default:
 			fmt.Println("你的输入有误，请重新输入")
 		}
 
-		if !loop {
-			break
-		}
-
-	}
-
-	//根据用户输入，显示新的提示信息
-	if key == 1 {
-		//登陆聊天室
-		fmt.Println("请输入用户id")
-		fmt.Scanf("%d\n", &userId)
-		fmt.Println("请输入用户密码")
-		fmt.Scanf("%s\n", &userPwd)
-		login(userId, userPwd)
-
-	} else if key == 2 {
-		fmt.Println("用户注册")
 	}
 }
