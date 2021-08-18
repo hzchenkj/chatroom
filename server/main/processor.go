@@ -16,6 +16,7 @@ type Processor struct {
 //编写一个server ProcessMsg
 //根据客户端发送消息的内容不同，决定调用哪个函数
 func (this *Processor) serverProcessMsg(msg *message.Message) (err error) {
+	fmt.Println("server processor .serverProcessMsg>>>")
 	switch msg.Type {
 	case message.LoginMsgType:
 		//处理登录逻辑
@@ -24,7 +25,12 @@ func (this *Processor) serverProcessMsg(msg *message.Message) (err error) {
 		}
 		err = up.ServerProcessLogin(msg)
 	case message.RegisterMsgType:
-		//
+		//处理注册
+		fmt.Println("注册处理>>>>")
+		up := &process2.UserProcess{
+			Conn: this.Conn,
+		}
+		err = up.ServerProcessRegister(msg)
 	default:
 		fmt.Println("消息类型不存在，无法处理...")
 	}

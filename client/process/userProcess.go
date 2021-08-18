@@ -7,9 +7,73 @@ import (
 	"encoding/json"
 	"fmt"
 	"net"
+	"os"
 )
 
 type UserProcess struct {
+}
+
+func (this *UserProcess) Register(userId int, userPwd string, userName string) (err error) {
+	fmt.Printf("userId = %d userPwd = %s \n", userId, userPwd)
+	// 连接到服务器
+	conn, err := net.Dial("tcp", "localhost:8889")
+	if err != nil {
+		fmt.Println("client dail net err=", err)
+		return
+	}
+	defer conn.Close()
+
+	//准备通过conn 发送消息给服务器
+	var msg message.Message
+	msg.Type = message.RegisterMsgType
+	// 创建Register msg
+	var registerMsg message.RegisterMsg
+	registerMsg.User.UserId = userId
+	registerMsg.User.UserPwd = userPwd
+	registerMsg.User.UserName = userName
+	//4  学历恶化
+	data, err := json.Marshal(registerMsg)
+	if err != nil {
+		fmt.Println("json Marshal err: ", err)
+		return
+	}
+
+	msg.Data = string(data)
+	//msg 序列化
+	data, err = json.Marshal(msg)
+	if err != nil {
+		fmt.Println("json Marshal err:", err)
+		return
+	}
+
+	fmt.Println("客户端发送的内容:", string(data))
+
+	tf := &util.Transfer{
+		Conn: conn,
+	}
+
+	err = tf.WritePkg(data)
+	if err != nil {
+		fmt.Println("注册发送信息错误 err=", err)
+		return
+	}
+
+	msg, err = tf.ReadPkg()
+	if err != nil {
+		fmt.Println("readPkg err =", err)
+		return
+	}
+
+	var registerResultMsg message.RegisterResultMsg
+	err = json.Unmarshal([]byte(msg.Data), &registerResultMsg)
+	if registerResultMsg.Code == 200 {
+		fmt.Println("注册成功,你重新登录一把")
+		os.Exit(0)
+	} else {
+		fmt.Println(registerResultMsg.Error)
+		os.Exit(0)
+	}
+	return
 }
 
 //登陆校验

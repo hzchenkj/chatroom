@@ -1,6 +1,7 @@
 package model
 
 import (
+	"chatroom/common/message"
 	"encoding/json"
 	"fmt"
 	"github.com/garyburd/redigo/redis"
@@ -37,6 +38,32 @@ func (this *UserDao) getUserById(conn redis.Conn, userId int) (user User, err er
 	err = json.Unmarshal([]byte(res), &user)
 	if err != nil {
 		fmt.Println("json.Unmarshal faild err :", err)
+		return
+	}
+	return
+}
+
+func (this *UserDao) Register(user *message.User) (err error) {
+	fmt.Println("UserDao>>Register>>")
+	conn := this.pool.Get()
+	defer conn.Close()
+	fmt.Println("UserDao>>Register>>getUserById")
+	_, err = this.getUserById(conn, user.UserId)
+	fmt.Println("UserDao>>Register>>getUserById done")
+	if err == nil {
+		err = ERROR_USER_EXISTS
+		return
+	}
+	fmt.Println(user.UserId, user.UserName, "用户不存在")
+	//说明用户redis中没有。
+	data, err := json.Marshal(user)
+	if err != nil {
+		return err
+	}
+	//入库redis
+	_, err = conn.Do("HSet", "users", user.UserId, string(data))
+	if err != nil {
+		fmt.Println("保存注册用户错误，err", err)
 		return
 	}
 	return
