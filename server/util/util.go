@@ -27,7 +27,7 @@ func (this *Transfer) WritePkg(data []byte) (err error) {
 		fmt.Println("conn.Write 长度不为四 发送错误", err)
 		return
 	}
-	fmt.Println("客户端,发送消息的长度=%d", len(data))
+	fmt.Printf("客户端,发送消息的长度=%d\n", len(data))
 
 	n, err = this.Conn.Write(data)
 	if n != int(pkgLen) || err != nil {

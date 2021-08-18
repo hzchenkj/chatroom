@@ -89,7 +89,7 @@ func (this *UserProcess) Login(userId int, userPwd string) (err error) {
 		for {
 			ShowMenu()
 		}
-	} else if loginResultMsg.Code == 500 {
+	} else {
 		fmt.Println(loginResultMsg.Error)
 	}
 

@@ -31,9 +31,17 @@ func (this *UserProcess) ServerProcessLogin(msg *message.Message) (err error) {
 	user, err := model.MyUserDao.Login(loginMsg.UserId, loginMsg.UserPwd)
 
 	if err != nil {
-		loginResutlMsg.Code = 500
-		loginResutlMsg.Error = "该用户不存在"
 
+		if err == model.ERROR_USER_NOTEXISTS {
+			loginResutlMsg.Code = 500
+			loginResutlMsg.Error = err.Error()
+		} else if err == model.ERROR_USER_PWD {
+			loginResutlMsg.Code = 403
+			loginResutlMsg.Error = err.Error()
+		} else {
+			loginResutlMsg.Code = 505
+			loginResutlMsg.Error = "服务器内部错误"
+		}
 	} else {
 		loginResutlMsg.Code = 200
 		fmt.Println(user, "登录成功")
