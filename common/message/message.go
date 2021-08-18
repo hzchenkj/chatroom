@@ -1,10 +1,11 @@
 package message
 
 const (
-	LoginMsgType          = "LoginMsg"
-	LoginResultMsgType    = "LoginResultMsg"
-	RegisterMsgType       = "RegisterMsg"
-	RegisterResultMsgType = "RegisterResultMsg"
+	LoginMsgType            = "LoginMsg"
+	LoginResultMsgType      = "LoginResultMsg"
+	RegisterMsgType         = "RegisterMsg"
+	RegisterResultMsgType   = "RegisterResultMsg"
+	NotifyUserStatusMsgType = "NotifyUserStatusMsg"
 )
 
 type Message struct {
@@ -25,7 +26,8 @@ type LoginMsg struct {
 //登录结果
 type LoginResultMsg struct {
 	//登录编码 500-用户未注册 200-登录成功
-	Code int `json:"code"`
+	Code    int   `json:"code"`
+	UserIds []int //保存用户id的切片
 	//错误信息
 	Error string `json:"error"`
 }
@@ -37,4 +39,9 @@ type RegisterMsg struct {
 type RegisterResultMsg struct {
 	Code  int    `json:"code"`
 	Error string `json:"error"`
+}
+
+type NotifyUserStatusMsg struct {
+	UserId int `json:"userId"`
+	Status int `json:"status"`
 }

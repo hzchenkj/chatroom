@@ -10,7 +10,12 @@ import (
 )
 
 type UserProcess struct {
-	Conn net.Conn
+	Conn   net.Conn
+	UserId int
+}
+
+func (this *UserProcess) NotifyOthersOnlineUser(userId int) {
+
 }
 
 func (this *UserProcess) ServerProcessRegister(msg *message.Message) (err error) {
@@ -84,7 +89,6 @@ func (this *UserProcess) ServerProcessLogin(msg *message.Message) (err error) {
 	user, err := model.MyUserDao.Login(loginMsg.UserId, loginMsg.UserPwd)
 
 	if err != nil {
-
 		if err == model.ERROR_USER_NOTEXISTS {
 			loginResutlMsg.Code = 500
 			loginResutlMsg.Error = err.Error()
@@ -97,6 +101,17 @@ func (this *UserProcess) ServerProcessLogin(msg *message.Message) (err error) {
 		}
 	} else {
 		loginResutlMsg.Code = 200
+		//这里，因为用户登录成功，我们就把该登录成功的用放入到userMgr中
+		//将登录成功的用户的userId 赋给 this
+		this.UserId = loginMsg.UserId
+		userMgr.AddOnlineUser(this)
+
+		//将当前在线用户的id 放入到loginResMes.UsersId
+		//遍历 userMgr.onlineUsers
+		for id, _ := range userMgr.onlienUsers {
+			loginResutlMsg.UserIds = append(loginResutlMsg.UserIds, id)
+		}
+
 		fmt.Println(user, "登录成功")
 	}
 

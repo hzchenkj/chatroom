@@ -146,6 +146,19 @@ func (this *UserProcess) Login(userId int, userPwd string) (err error) {
 	err = json.Unmarshal([]byte(msg.Data), &loginResultMsg)
 	if loginResultMsg.Code == 200 {
 		fmt.Println("登录成功")
+		//显示当前在线用户
+
+		fmt.Println("当前在线用户列表如下:")
+		for _, v := range loginResultMsg.UserIds {
+
+			if v == userId {
+				continue
+			}
+
+			fmt.Println("用户id:\t", v)
+		}
+		fmt.Println()
+
 		//启动一个协程 保持和服务器端通讯
 		go serverProcessMsg(conn)
 
