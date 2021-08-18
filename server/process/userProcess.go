@@ -2,6 +2,7 @@ package process2
 
 import (
 	"chatroom/common/message"
+	"chatroom/server/model"
 	"chatroom/server/util"
 	"encoding/json"
 	"fmt"
@@ -26,15 +27,27 @@ func (this *UserProcess) ServerProcessLogin(msg *message.Message) (err error) {
 	resMsg.Type = message.LoginResultMsgType
 
 	var loginResutlMsg message.LoginResultMsg
-	//如果用户id是100 密码是123456
-	if loginMsg.UserId == 100 && loginMsg.UserPwd == "123456" {
-		//合法
-		loginResutlMsg.Code = 200
-	} else {
-		//不合法
+
+	user, err := model.MyUserDao.Login(loginMsg.UserId, loginMsg.UserPwd)
+
+	if err != nil {
 		loginResutlMsg.Code = 500
-		loginResutlMsg.Error = "用户不存在"
+		loginResutlMsg.Error = "该用户不存在"
+
+	} else {
+		loginResutlMsg.Code = 200
+		fmt.Println(user, "登录成功")
 	}
+
+	////如果用户id是100 密码是123456
+	//if loginMsg.UserId == 100 && loginMsg.UserPwd == "123456" {
+	//	//合法
+	//	loginResutlMsg.Code = 200
+	//} else {
+	//	//不合法
+	//	loginResutlMsg.Code = 500
+	//	loginResutlMsg.Error = "用户不存在"
+	//}
 	data, err := json.Marshal(loginResutlMsg)
 	if err != nil {
 		fmt.Println("json.Marshal faild err:", err)
